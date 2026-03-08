@@ -22,13 +22,13 @@ class TransformerPlayer(Player):
         # LoRA adapter repository
         self.hf_repo = hf_repo
 
-        # model used during training
+        # model used during training (see ipynb for training)
         self.model_id = model_id
 
         self.enable_cache = enable_cache
         self.moves_per_candidate_group = moves_per_candidate_group
 
-        # cache previously seen positions
+        # cache earlier seen positions
         self.cache: Dict[str, str] = {}
 
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -61,7 +61,7 @@ class TransformerPlayer(Player):
         # store model device
         self.model_device = next(self.model.parameters()).device
 
-        # simple piece values used in heuristics
+        # values see source below
         self.piece_values = {
             chess.PAWN: 1.0,
             chess.KNIGHT: 3.0,
@@ -76,7 +76,7 @@ class TransformerPlayer(Player):
         return f"FEN: {fen}\nMOVE: "
 
     def _find_checkmate(self, board: chess.Board) -> Optional[str]:
-        # check if any legal move results in instant checkmate
+        # check if any legal move results in checkmate
         for move in board.legal_moves:
             board.push(move)
 
@@ -315,3 +315,5 @@ class TransformerPlayer(Player):
             self.cache[fen] = best_move
 
         return best_move
+
+# source: https://en.wikipedia.org/wiki/Chess_piece_relative_value
